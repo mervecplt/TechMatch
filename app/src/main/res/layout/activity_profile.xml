@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Toolbar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="#FF6200EE"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="← Profil"
+                android:textSize="20sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <!-- Profil Kartı -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="24dp"
+            android:layout_margin="16dp">
+
+            <!-- Avatar -->
+            <TextView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:text="👤"
+                android:textSize="50sp"
+                android:gravity="center"
+                android:background="#FF6200EE"
+                android:textColor="#FFFFFF"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/tvUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ahmet Yılmaz"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"/>
+
+            <TextView
+                android:id="@+id/tvUserDepartment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bilgisayar Mühendisliği"
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:layout_gravity="center"
+                android:layout_marginTop="4dp"/>
+
+            <TextView
+                android:id="@+id/tvUserEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ahmet@email.com"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
+
+        <!-- Biyografi -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="16dp"
+            android:layout_margin="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📝 Hakkımda"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/tvUserBio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Yapay zeka ve makine öğrenmesi ile ilgileniyorum"
+                android:textSize="14sp"
+                android:textColor="#666666"/>
+        </LinearLayout>
+
+        <!-- Beceriler -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"
+            android:padding="16dp"
+            android:layout_margin="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="💡 Beceriler"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/tvUserSkills"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Python, Machine Learning, TensorFlow"
+                android:textSize="14sp"
+                android:textColor="#666666"/>
+        </LinearLayout>
+
+        <!-- Portfolyo Butonu -->
+        <Button
+            android:id="@+id/btnViewPortfolio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🏆 Başarılarımı Görüntüle"
+            android:textSize="16sp"
+            android:backgroundTint="#03DAC5"
+            android:layout_margin="16dp"/>
+
+    </LinearLayout>
+</ScrollView>

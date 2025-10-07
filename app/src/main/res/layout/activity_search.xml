@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
+
+    <!-- Toolbar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#FF6200EE"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="← Arama"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:id="@+id/btnBack"/>
+    </LinearLayout>
+
+    <!-- Arama Çubuğu -->
+    <EditText
+        android:id="@+id/etSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="İsim, beceri veya kategori ara..."
+        android:padding="16dp"
+        android:layout_margin="16dp"
+        android:background="#FFFFFF"
+        android:drawableLeft="@android:drawable/ic_menu_search"/>
+
+    <!-- Filtre Butonları -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnFilterUsers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Kullanıcılar"
+            android:backgroundTint="#FF6200EE"
+            android:layout_margin="4dp"/>
+
+        <Button
+            android:id="@+id/btnFilterProjects"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Projeler"
+            android:backgroundTint="#03DAC5"
+            android:layout_margin="4dp"/>
+    </LinearLayout>
+
+    <!-- Kategori Filtreleri -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnCatAI"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yapay Zeka"
+                android:backgroundTint="#E0E0E0"
+                android:textColor="#000000"
+                android:layout_margin="4dp"/>
+
+            <Button
+                android:id="@+id/btnCatIoT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="IoT"
+                android:backgroundTint="#E0E0E0"
+                android:textColor="#000000"
+                android:layout_margin="4dp"/>
+
+            <Button
+                android:id="@+id/btnCatMobile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mobil Uygulama"
+                android:backgroundTint="#E0E0E0"
+                android:textColor="#000000"
+                android:layout_margin="4dp"/>
+
+            <Button
+                android:id="@+id/btnCatRobotics"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Robotik"
+                android:backgroundTint="#E0E0E0"
+                android:textColor="#000000"
+                android:layout_margin="4dp"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- Sonuç Listesi -->
+    <ListView
+        android:id="@+id/lvResults"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="#E0E0E0"
+        android:dividerHeight="1dp"/>
+
+</LinearLayout>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#F5F5F5">
+
+    <!-- Başlık -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TechMatch"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="#FF6200EE"
+        android:gravity="center"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Teknofest için takım arkadaşı bul!"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:gravity="center"
+        android:layout_marginBottom="40dp"/>
+
+    <!-- Arama Butonu -->
+    <Button
+        android:id="@+id/btnSearch"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="🔍 Takım Arkadaşı Ara"
+        android:textSize="18sp"
+        android:backgroundTint="#FF6200EE"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Profil Butonu -->
+    <Button
+        android:id="@+id/btnProfile"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="👤 Profilimi Görüntüle"
+        android:textSize="18sp"
+        android:backgroundTint="#03DAC5"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- İstatistikler -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp"
+            android:background="#FFFFFF"
+            android:layout_margin="8dp">
+
+            <TextView
+                android:id="@+id/tvUserCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="#FF6200EE"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kullanıcı"
+                android:textSize="14sp"
+                android:textColor="#666666"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="16dp"
+            android:background="#FFFFFF"
+            android:layout_margin="8dp">
+
+            <TextView
+                android:id="@+id/tvProjectCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="#03DAC5"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Proje"
+                android:textSize="14sp"
+                android:textColor="#666666"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
