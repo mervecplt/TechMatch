@@ -13,15 +13,35 @@
         android:theme="@style/Theme.TechMatch"
         tools:targetApi="31">
 
+        <!-- SPLASH SCREEN - İLK AÇILAN EKRAN -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".activities.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- LOGIN SCREEN -->
+        <activity
+            android:name=".activities.LoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <!-- SIGN UP SCREEN -->
+        <activity
+            android:name=".activities.SignUpActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <!-- MAIN ACTIVITY (Artık ilk ekran değil) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
+        <!-- DİĞER AKTİVİTELER -->
         <activity
             android:name=".activities.SearchActivity"
             android:exported="false" />
