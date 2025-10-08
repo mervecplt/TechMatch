@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.techmatch.activities.ProfileActivity;
 import com.example.techmatch.activities.SearchActivity;
+import com.example.techmatch.models.User;
 import com.example.techmatch.utils.DataManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // DataManager instance
-        dataManager = DataManager.getInstance();
+        dataManager = DataManager.getInstance(this);
 
         // View'ları bağla
         btnSearch = findViewById(R.id.btnSearch);
@@ -39,9 +40,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnProfile.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-            intent.putExtra("USER_ID", 1); // Örnek kullanıcı ID
-            startActivity(intent);
+            // ⭐ DÜZELTİLDİ: Giriş yapan kullanıcının ID'sini gönder
+            User currentUser = dataManager.getCurrentUser();
+            if (currentUser != null) {
+                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                intent.putExtra("USER_ID", currentUser.getId());
+                startActivity(intent);
+            }
         });
     }
 

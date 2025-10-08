@@ -9,79 +9,98 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.techmatch.MainActivity;
 import com.example.techmatch.R;
+import com.example.techmatch.models.User;
+import com.example.techmatch.utils.DataManager;
 
 public class LoginActivity extends AppCompatActivity {
 
     private EditText etEmail, etPassword;
-    private Button btnSignIn;
+    private Button btnLogin;
     private TextView tvSignUp, tvForgotPassword;
-
-    // Test hesabı (şimdilik - sonra Firebase ile değiştirilecek)
-    private static final String TEST_EMAIL = "test@techmatch.com";
-    private static final String TEST_PASSWORD = "123456";
+    private DataManager dataManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // DataManager instance
+        dataManager = DataManager.getInstance(this);
+
+        // Navigasyon kaydı
+        dataManager.navigateTo("LoginActivity");
+
         // View'ları bağla
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
-        btnSignIn = findViewById(R.id.btnSignIn);
+        btnLogin = findViewById(R.id.btnLogin);
         tvSignUp = findViewById(R.id.tvSignUp);
-        tvForgotPassword = findViewById(R.id.tvForgotPassword);
 
-        // Sign In butonu
-        btnSignIn.setOnClickListener(v -> {
-            String email = etEmail.getText().toString().trim();
-            String password = etPassword.getText().toString();
+        // SignUp'tan gelen email varsa doldur
+        String registeredEmail = getIntent().getStringExtra("registered_email");
+        if (registeredEmail != null) {
+            etEmail.setText(registeredEmail);
+            etPassword.requestFocus();
+        }
 
-            // Validasyon
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Lütfen email ve şifrenizi girin", Toast.LENGTH_SHORT).show();
-                return;
-            }
+        // NOT: Otomatik giriş kontrolü KALDIRILDI
+        // Artık her seferinde şifre istenecek
 
-            // Email formatı kontrolü
-            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                Toast.makeText(this, "Geçerli bir email adresi girin", Toast.LENGTH_SHORT).show();
-                return;
-            }
+        // Login butonu
+        btnLogin.setOnClickListener(v -> handleLogin());
 
-            // Giriş kontrolü (şimdilik test hesabı ile)
-            // Debug için kontrol edelim
-            if (email.equalsIgnoreCase(TEST_EMAIL) && password.equals(TEST_PASSWORD)) {
-                // Başarılı giriş
-                Toast.makeText(this, "Giriş başarılı! Hoş geldiniz", Toast.LENGTH_SHORT).show();
-
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                // Hatalı giriş - Debug mesajı
-                Toast.makeText(this, "Email veya şifre hatalı!\nTest: test@techmatch.com / 123456", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        // Sign Up linki
+        // Sign Up'a git
         tvSignUp.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
             startActivity(intent);
         });
+    }
 
-        // Şifremi Unuttum
-        tvForgotPassword.setOnClickListener(v -> {
-            String email = etEmail.getText().toString().trim();
+    private void handleLogin() {
+        String email = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString();
 
-            if (email.isEmpty()) {
-                Toast.makeText(this, "Lütfen email adresinizi girin", Toast.LENGTH_SHORT).show();
-            } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                Toast.makeText(this, "Geçerli bir email adresi girin", Toast.LENGTH_SHORT).show();
+        // Validasyonlar
+        if (email.isEmpty()) {
+            etEmail.setError("Email gerekli");
+            etEmail.requestFocus();
+            return;
+        }
+
+        if (password.isEmpty()) {
+            etPassword.setError("Şifre gerekli");
+            etPassword.requestFocus();
+            return;
+        }
+
+        // Giriş denemesi
+        User user = dataManager.loginUser(email, password);
+
+        if (user != null) {
+            // Giriş başarılı
+            Toast.makeText(this, "Hoş geldiniz " + user.getName(), Toast.LENGTH_SHORT).show();
+            goToMainActivity();
+        } else {
+            // Giriş başarısız
+            if (!dataManager.isEmailRegistered(email)) {
+                Toast.makeText(this, "Bu email kayıtlı değil. Önce kayıt olun.", Toast.LENGTH_LONG).show();
             } else {
-                // Şifre sıfırlama maili gönderildi (simülasyon)
-                Toast.makeText(this, "Şifre sıfırlama bağlantısı " + email + " adresine gönderildi", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Yanlış şifre. Tekrar deneyin.", Toast.LENGTH_SHORT).show();
+                etPassword.setError("Yanlış şifre");
+                etPassword.requestFocus();
             }
-        });
+        }
+    }
+
+    private void goToMainActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish(); // Login ekranına geri dönülmesin
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Login ekranında geri tuşu uygulamadan çıkar
+        finishAffinity(); // Tüm activity'leri kapat
     }
 }

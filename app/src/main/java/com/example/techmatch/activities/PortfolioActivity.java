@@ -26,7 +26,7 @@ public class PortfolioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_portfolio);
 
-        dataManager = DataManager.getInstance();
+        dataManager = DataManager.getInstance(this);
 
         // View'ları bağla
         btnBack = findViewById(R.id.btnBack);
@@ -48,22 +48,20 @@ public class PortfolioActivity extends AppCompatActivity {
     private void displayAchievements() {
         tvPortfolioTitle.setText(currentUser.getName() + " - Başarılar");
 
-        LinkedList<Achievement> achievements = currentUser.getAchievements();
+        // ⭐ DÜZELTİLDİ: List<String> olarak al
+        List<String> achievements = dataManager.getAchievements(currentUser.getId());
         List<String> displayList = new ArrayList<>();
 
         if (achievements.isEmpty()) {
             displayList.add("Henüz başarı eklenmemiş");
         } else {
             for (int i = 0; i < achievements.size(); i++) {
-                Achievement ach = achievements.get(i);
-                String display = "🏆 " + ach.getTitle() + "\n" +
-                        (!ach.getRank().isEmpty() ? ach.getRank() + " - " : "") +
-                        ach.getCategory() + " (" + ach.getType() + ")\n" +
-                        ach.getDate();
+                String display = "🏆 " + achievements.get(i);
                 displayList.add(display);
             }
         }
 
+        // Adapter'ı ayarla
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_list_item_1,

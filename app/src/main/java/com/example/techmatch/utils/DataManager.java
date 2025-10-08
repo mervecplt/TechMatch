@@ -1,261 +1,274 @@
 package com.example.techmatch.utils;
 
-import com.example.techmatch.datastructures.CustomHashMap;
-import com.example.techmatch.datastructures.LinkedList;
-import com.example.techmatch.datastructures.Queue;
-import com.example.techmatch.datastructures.Stack;
-import com.example.techmatch.models.Achievement;
-import com.example.techmatch.models.Project;
-import com.example.techmatch.models.TeamRequest;
+import android.content.Context;
+import android.content.SharedPreferences;
+import com.example.techmatch.datastructures.*;
 import com.example.techmatch.models.User;
+import com.example.techmatch.models.Project;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataManager {
     private static DataManager instance;
+    private CustomHashMap<String, User> users; // Email -> User
+    private CustomHashMap<Integer, User> usersById; // ID -> User
+    private CustomHashMap<Integer, Project> projects; // ProjectID -> Project
+    private Stack<String> navigationStack; // Geri tuşu için
+    private Queue<String> activityQueue; // İleri tuşu için
+    private SharedPreferences sharedPreferences;
+    private Gson gson;
 
-    // Veri yapıları
-    private LinkedList<User> users;
-    private LinkedList<Project> projects;
-    private Queue<TeamRequest> teamRequests;
-    private Stack<String> searchHistory;
-    private CustomHashMap<String, LinkedList<User>> categoryMap;
+    private static final String PREFS_NAME = "TechMatchPrefs";
+    private static final String KEY_USERS = "users";
+    private static final String KEY_CURRENT_USER = "current_user_email";
 
-    private DataManager() {
-        users = new LinkedList<>();
-        projects = new LinkedList<>();
-        teamRequests = new Queue<>();
-        searchHistory = new Stack<>();
-        categoryMap = new CustomHashMap<>();
+    // Singleton Pattern
+    private DataManager(Context context) {
+        users = new CustomHashMap<>();
+        usersById = new CustomHashMap<>();
+        projects = new CustomHashMap<>();
+        navigationStack = new Stack<>();
+        activityQueue = new Queue<>();
+        sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        gson = new Gson();
 
-        initializeSampleData();
+        loadUsersFromPrefs(); // Kayıtlı kullanıcıları yükle
+        addSampleData(); // Örnek veriler
     }
 
-    public static DataManager getInstance() {
+    public static DataManager getInstance(Context context) {
         if (instance == null) {
-            instance = new DataManager();
+            instance = new DataManager(context.getApplicationContext());
         }
         return instance;
     }
 
-    private void initializeSampleData() {
-        // Örnek Kullanıcılar
-        User user1 = new User(1, "Ahmet Yılmaz", "Bilgisayar Mühendisliği", "ahmet@email.com");
-        user1.setBio("Yapay zeka ve makine öğrenmesi ile ilgileniyorum");
-        user1.addSkill("Python");
-        user1.addSkill("Machine Learning");
-        user1.addSkill("TensorFlow");
-        user1.addCategory("Yapay Zeka");
-        user1.addCategory("Yazılım");
+    // ==================== KULLANICI YÖNETİMİ ====================
 
-        Achievement ach1 = new Achievement(1, "Teknofest 2023", "Yapay Zeka", "Yarışma");
-        ach1.setRank("2. Yer");
-        ach1.setDescription("Görüntü işleme projesi ile finalist");
-        user1.addAchievement(ach1);
+    // Kullanıcı kaydet
+    public boolean registerUser(String name, String surname, String email, String password) {
+        // Email zaten var mı kontrol et
+        if (users.containsKey(email)) {
+            return false; // Bu email zaten kayıtlı
+        }
 
-        User user2 = new User(2, "Ayşe Demir", "Elektrik-Elektronik Mühendisliği", "ayse@email.com");
-        user2.setBio("Gömülü sistemler ve IoT projelerinde deneyimliyim");
-        user2.addSkill("Arduino");
-        user2.addSkill("C++");
-        user2.addSkill("IoT");
-        user2.addCategory("Donanım");
-        user2.addCategory("IoT");
+        // Yeni kullanıcı ID'si
+        int newId = users.size() + 1;
 
-        Achievement ach2 = new Achievement(2, "Akıllı Ev Sistemi", "IoT", "Proje");
-        ach2.setDescription("Üniversite projesi - Tam otomasyon");
-        user2.addAchievement(ach2);
+        // Yeni kullanıcı oluştur
+        User newUser = new User(
+                newId,
+                name + " " + surname,
+                email,
+                password,
+                "Öğrenci", // Varsayılan departman
+                ""  // Bio boş
+        );
 
-        User user3 = new User(3, "Mehmet Kaya", "Yazılım Mühendisliği", "mehmet@email.com");
-        user3.setBio("Full-stack developer, mobil uygulama geliştiriyorum");
-        user3.addSkill("Java");
-        user3.addSkill("Android");
-        user3.addSkill("React");
-        user3.addCategory("Mobil Uygulama");
-        user3.addCategory("Yazılım");
+        // HashMap'e ekle (hem email hem ID ile)
+        users.put(email, newUser);
+        usersById.put(newId, newUser);
 
-        Achievement ach3 = new Achievement(3, "Google Developer Sertifikası", "Android", "Sertifika");
-        ach3.setDescription("Associate Android Developer");
-        user3.addAchievement(ach3);
+        // SharedPreferences'e kaydet (kalıcı)
+        saveUsersToPrefs();
 
-        User user4 = new User(4, "Zeynep Şahin", "Endüstri Mühendisliği", "zeynep@email.com");
-        user4.setBio("Veri analizi ve optimizasyon");
-        user4.addSkill("Python");
-        user4.addSkill("Data Analysis");
-        user4.addSkill("Excel");
-        user4.addCategory("Veri Bilimi");
-
-        User user5 = new User(5, "Can Arslan", "Makine Mühendisliği", "can@email.com");
-        user5.setBio("Robotik ve otomasyon sistemleri");
-        user5.addSkill("ROS");
-        user5.addSkill("Python");
-        user5.addSkill("CAD");
-        user5.addCategory("Robotik");
-        user5.addCategory("Donanım");
-
-        Achievement ach5 = new Achievement(5, "Robot Yarışması", "Robotik", "Yarışma");
-        ach5.setRank("1. Yer");
-        user5.addAchievement(ach5);
-
-        // Kullanıcıları ekle
-        users.add(user1);
-        users.add(user2);
-        users.add(user3);
-        users.add(user4);
-        users.add(user5);
-
-        // Örnek Projeler
-        Project project1 = new Project(1, "Yapay Zeka Tabanlı Sağlık Asistanı",
-                "Yapay Zeka", "Hastalık teşhisi için ML modeli", 1, "Ahmet Yılmaz");
-        project1.addRequiredSkill("Python");
-        project1.addRequiredSkill("Machine Learning");
-        project1.setMaxTeamSize(4);
-
-        Project project2 = new Project(2, "Akıllı Tarım Sistemi",
-                "IoT", "Sensörlerle tarla izleme", 2, "Ayşe Demir");
-        project2.addRequiredSkill("Arduino");
-        project2.addRequiredSkill("IoT");
-        project2.setMaxTeamSize(3);
-
-        Project project3 = new Project(3, "Eğitim Uygulaması",
-                "Mobil Uygulama", "Öğrenciler için interaktif platform", 3, "Mehmet Kaya");
-        project3.addRequiredSkill("Java");
-        project3.addRequiredSkill("Android");
-        project3.setMaxTeamSize(5);
-
-        Project project4 = new Project(4, "Otonom Araç Simülasyonu",
-                "Robotik", "ROS tabanlı simülasyon", 5, "Can Arslan");
-        project4.addRequiredSkill("ROS");
-        project4.addRequiredSkill("Python");
-        project4.setMaxTeamSize(4);
-
-        projects.add(project1);
-        projects.add(project2);
-        projects.add(project3);
-        projects.add(project4);
-
-        // Kategoriye göre kullanıcıları grupla
-        updateCategoryMap();
-
-        // Örnek takım başvuruları
-        TeamRequest req1 = new TeamRequest(1, 3, "Mehmet Kaya", 1,
-                "Yapay Zeka Tabanlı Sağlık Asistanı", "Android geliştirme konusunda yardımcı olabilirim");
-        TeamRequest req2 = new TeamRequest(2, 4, "Zeynep Şahin", 1,
-                "Yapay Zeka Tabanlı Sağlık Asistanı", "Veri analizi yapabilirim");
-
-        teamRequests.enqueue(req1);
-        teamRequests.enqueue(req2);
+        return true;
     }
 
-    private void updateCategoryMap() {
-        for (int i = 0; i < users.size(); i++) {
-            User user = users.get(i);
-            LinkedList<String> categories = user.getCategories();
+    // Kullanıcı girişi
+    public User loginUser(String email, String password) {
+        User user = users.get(email);
 
-            for (int j = 0; j < categories.size(); j++) {
-                String category = categories.get(j);
-                LinkedList<User> categoryUsers = categoryMap.get(category);
+        if (user != null && user.getPassword().equals(password)) {
+            // Giriş başarılı - Mevcut kullanıcıyı kaydet
+            setCurrentUser(email);
+            return user;
+        }
 
-                if (categoryUsers == null) {
-                    categoryUsers = new LinkedList<>();
-                    categoryMap.put(category, categoryUsers);
-                }
-                categoryUsers.add(user);
-            }
+        return null; // Giriş başarısız
+    }
+
+    // Mevcut kullanıcıyı kaydet
+    private void setCurrentUser(String email) {
+        sharedPreferences.edit().putString(KEY_CURRENT_USER, email).apply();
+    }
+
+    // Mevcut kullanıcıyı al
+    public User getCurrentUser() {
+        String email = sharedPreferences.getString(KEY_CURRENT_USER, null);
+        if (email != null) {
+            return users.get(email);
+        }
+        return null;
+    }
+
+    // ID'ye göre kullanıcı getir
+    public User getUserById(int userId) {
+        return usersById.get(userId);
+    }
+
+    // ⭐ YENİ: Kullanıcı bilgilerini güncelle
+    public void updateUser(User user) {
+        if (user != null) {
+            // HashMap'lerde güncelle
+            users.put(user.getEmail(), user);
+            usersById.put(user.getId(), user);
+
+            // SharedPreferences'e kaydet (kalıcı)
+            saveUsersToPrefs();
         }
     }
 
-    // Kullanıcı arama (isme göre)
-    public LinkedList<User> searchUsersByName(String query) {
-        LinkedList<User> results = new LinkedList<>();
-        searchHistory.push(query);
+    // Çıkış yap
+    public void logout() {
+        sharedPreferences.edit().remove(KEY_CURRENT_USER).apply();
+    }
 
-        for (int i = 0; i < users.size(); i++) {
-            User user = users.get(i);
-            if (user.getName().toLowerCase().contains(query.toLowerCase())) {
-                results.add(user);
-            }
+    // Email kontrolü
+    public boolean isEmailRegistered(String email) {
+        return users.containsKey(email);
+    }
+
+    // Tüm kullanıcıları getir
+    public List<User> getAllUsers() {
+        List<User> userList = new ArrayList<>();
+        for (User user : users.values()) {
+            userList.add(user);
         }
-        return results;
+        return userList;
     }
 
-    // Kategoriye göre kullanıcı arama
-    public LinkedList<User> searchUsersByCategory(String category) {
-        searchHistory.push("Kategori: " + category);
-        LinkedList<User> result = categoryMap.get(category);
-        return result != null ? result : new LinkedList<>();
-    }
-
-    // Beceriye göre kullanıcı arama
-    public LinkedList<User> searchUsersBySkill(String skill) {
-        LinkedList<User> results = new LinkedList<>();
-        searchHistory.push("Beceri: " + skill);
-
-        for (int i = 0; i < users.size(); i++) {
-            User user = users.get(i);
-            if (user.hasSkill(skill)) {
-                results.add(user);
-            }
+    // Başarıları getir (PortfolioActivity için)
+    public List<String> getAchievements(int userId) {
+        User user = getUserById(userId);
+        if (user != null) {
+            return user.getAchievements();
         }
-        return results;
+        return new ArrayList<>();
     }
 
-    // Proje arama
-    public LinkedList<Project> searchProjectsByCategory(String category) {
-        LinkedList<Project> results = new LinkedList<>();
+    // ==================== NAVİGASYON YÖNETİMİ ====================
 
-        for (int i = 0; i < projects.size(); i++) {
-            Project project = projects.get(i);
-            if (project.getCategory().equalsIgnoreCase(category)) {
-                results.add(project);
-            }
-        }
-        return results;
+    // Yeni sayfaya git (Stack'e ekle)
+    public void navigateTo(String activityName) {
+        navigationStack.push(activityName);
     }
 
-    // ID'ye göre kullanıcı bul
-    public User getUserById(int id) {
-        for (int i = 0; i < users.size(); i++) {
-            User user = users.get(i);
-            if (user.getId() == id) {
-                return user;
+    // Geri git
+    public String goBack() {
+        if (!navigationStack.isEmpty()) {
+            String current = navigationStack.pop();
+            activityQueue.enqueue(current); // İleri için kaydet
+
+            if (!navigationStack.isEmpty()) {
+                return navigationStack.peek(); // Bir önceki sayfa
             }
         }
         return null;
     }
 
-    // ID'ye göre proje bul
+    // İleri git
+    public String goForward() {
+        if (!activityQueue.isEmpty()) {
+            String next = activityQueue.dequeue();
+            navigationStack.push(next);
+            return next;
+        }
+        return null;
+    }
+
+    // Geri gidilebilir mi?
+    public boolean canGoBack() {
+        return navigationStack.size() > 1;
+    }
+
+    // İleri gidilebilir mi?
+    public boolean canGoForward() {
+        return !activityQueue.isEmpty();
+    }
+
+    // ==================== PROJE YÖNETİMİ ====================
+
+    public void addProject(Project project) {
+        projects.put(project.getId(), project);
+    }
+
     public Project getProjectById(int id) {
-        for (int i = 0; i < projects.size(); i++) {
-            Project project = projects.get(i);
-            if (project.getId() == id) {
-                return project;
+        return projects.get(id);
+    }
+
+    // Tüm projeleri getir
+    public List<Project> getAllProjects() {
+        List<Project> projectList = new ArrayList<>();
+        for (Project project : projects.values()) {
+            projectList.add(project);
+        }
+        return projectList;
+    }
+
+    public int getUserCount() {
+        return users.size();
+    }
+
+    public int getProjectCount() {
+        return projects.size();
+    }
+
+    // ==================== KALICI DEPOLAMA ====================
+
+    // Kullanıcıları SharedPreferences'e kaydet
+    private void saveUsersToPrefs() {
+        List<User> userList = new ArrayList<>();
+
+        for (User user : users.values()) {
+            userList.add(user);
+        }
+
+        String json = gson.toJson(userList);
+        sharedPreferences.edit().putString(KEY_USERS, json).apply();
+    }
+
+    // Kullanıcıları SharedPreferences'ten yükle
+    private void loadUsersFromPrefs() {
+        String json = sharedPreferences.getString(KEY_USERS, null);
+        if (json != null) {
+            Type listType = new TypeToken<ArrayList<User>>(){}.getType();
+            List<User> userList = gson.fromJson(json, listType);
+
+            if (userList != null) {
+                for (User user : userList) {
+                    users.put(user.getEmail(), user);
+                    usersById.put(user.getId(), user);
+                }
             }
         }
-        return null;
     }
 
-    // Tüm getters
-    public LinkedList<User> getAllUsers() {
-        return users;
-    }
+    // ==================== ÖRNEK VERİLER ====================
 
-    public LinkedList<Project> getAllProjects() {
-        return projects;
-    }
+    private void addSampleData() {
+        // Eğer hiç kullanıcı yoksa örnek kullanıcı ekle
+        if (users.size() == 0) {
+            registerUser("Ahmet", "Yılmaz", "ahmet@test.com", "123456");
+            registerUser("Ayşe", "Demir", "ayse@test.com", "123456");
+            registerUser("Mehmet", "Kaya", "mehmet@test.com", "123456");
+        }
 
-    public Queue<TeamRequest> getTeamRequests() {
-        return teamRequests;
-    }
+        // Örnek projeler
+        if (projects.size() == 0) {
+            Project p1 = new Project(1, "AI Chatbot", "Yapay Zeka",
+                    "Doğal dil işleme ile chatbot", 5);
+            Project p2 = new Project(2, "IoT Akıllı Ev", "IoT",
+                    "Akıllı ev otomasyonu", 3);
+            Project p3 = new Project(3, "Mobil Oyun", "Mobile",
+                    "Unity ile mobil oyun", 4);
 
-    public Stack<String> getSearchHistory() {
-        return searchHistory;
-    }
-
-    // Takım başvurusu ekle
-    public void addTeamRequest(TeamRequest request) {
-        teamRequests.enqueue(request);
-    }
-
-    // Son arama
-    public String getLastSearch() {
-        return searchHistory.peek();
+            addProject(p1);
+            addProject(p2);
+            addProject(p3);
+        }
     }
 }

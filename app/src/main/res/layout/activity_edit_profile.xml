@@ -22,89 +22,64 @@
                 android:id="@+id/btnBack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="← Profil"
+                android:text="← Profili Düzenle"
                 android:textSize="20sp"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"/>
         </LinearLayout>
 
-        <!-- Profil Kartı -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#FFFFFF"
-            android:padding="24dp"
-            android:layout_margin="16dp">
-
-            <!-- Avatar -->
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:text="👤"
-                android:textSize="50sp"
-                android:gravity="center"
-                android:background="#FF6200EE"
-                android:textColor="#FFFFFF"
-                android:layout_gravity="center"/>
-
-            <TextView
-                android:id="@+id/tvUserName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ahmet Yılmaz"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_marginTop="16dp"/>
-
-            <TextView
-                android:id="@+id/tvUserDepartment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bilgisayar Mühendisliği"
-                android:textSize="16sp"
-                android:textColor="#666666"
-                android:layout_gravity="center"
-                android:layout_marginTop="4dp"/>
-
-            <TextView
-                android:id="@+id/tvUserEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ahmet@email.com"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"/>
-        </LinearLayout>
-
-        <!-- Biyografi -->
+        <!-- Temel Bilgiler -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="#FFFFFF"
             android:padding="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="8dp">
+            android:layout_margin="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="📝 Hakkımda"
+                android:text="📝 Temel Bilgiler"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="16dp"/>
 
             <TextView
-                android:id="@+id/tvUserBio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Biyografi"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+
+            <EditText
+                android:id="@+id/etBio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Henüz biyografi eklenmemiş"
+                android:hint="Kendinden bahset..."
+                android:minHeight="80dp"
+                android:gravity="top"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_background"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Beceriler (virgülle ayırarak)"
                 android:textSize="14sp"
-                android:textColor="#666666"/>
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+
+            <EditText
+                android:id="@+id/etSkills"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Java, Python, React..."
+                android:padding="12dp"
+                android:background="@drawable/edit_text_background"
+                android:layout_marginBottom="8dp"/>
         </LinearLayout>
 
         <!-- Eğitim Bilgileri -->
@@ -116,7 +91,7 @@
             android:padding="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -124,52 +99,60 @@
                 android:text="🎓 Eğitim"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp"/>
-
-            <TextView
-                android:id="@+id/tvEducationInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Eğitim bilgisi eklenmemiş"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:layout_marginBottom="4dp"/>
-
-            <TextView
-                android:id="@+id/tvGpaInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="GPA: Girilmemiş"
-                android:textSize="14sp"
-                android:textColor="#666666"/>
-        </LinearLayout>
-
-        <!-- Beceriler -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#FFFFFF"
-            android:padding="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="8dp">
+                android:layout_marginBottom="16dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="💡 Beceriler"
-                android:textSize="18sp"
+                android:text="Üniversite"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="4dp"/>
 
-            <TextView
-                android:id="@+id/tvUserSkills"
+            <EditText
+                android:id="@+id/etUniversity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Beceri eklenmemiş"
+                android:hint="Üniversite adı"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_background"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mezuniyet Yılı"
                 android:textSize="14sp"
-                android:textColor="#666666"/>
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+
+            <EditText
+                android:id="@+id/etGraduationYear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="2024"
+                android:inputType="number"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_background"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GPA (0-4.0)"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp"/>
+
+            <EditText
+                android:id="@+id/etGpa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="3.50"
+                android:inputType="numberDecimal"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_background"
+                android:layout_marginBottom="8dp"/>
         </LinearLayout>
 
         <!-- Projeler -->
@@ -181,21 +164,31 @@
             android:padding="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="📁 Projeler"
+                android:text="📁 Proje Ekle"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="16dp"/>
 
-            <LinearLayout
-                android:id="@+id/llProjects"
+            <EditText
+                android:id="@+id/etProject"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:hint="E-Ticaret Sitesi - MERN stack"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_background"
+                android:layout_marginBottom="8dp"/>
+
+            <Button
+                android:id="@+id/btnAddProject"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="+ Proje Ekle"
+                android:backgroundTint="#03DAC5"/>
         </LinearLayout>
 
         <!-- İş Deneyimi -->
@@ -207,21 +200,31 @@
             android:padding="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="💼 İş Deneyimi"
+                android:text="💼 İş Deneyimi Ekle"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="16dp"/>
 
-            <LinearLayout
-                android:id="@+id/llWorkExperience"
+            <EditText
+                android:id="@+id/etWorkExperience"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:hint="Google - Software Engineer Intern (2023)"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_background"
+                android:layout_marginBottom="8dp"/>
+
+            <Button
+                android:id="@+id/btnAddWorkExperience"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="+ İş Deneyimi Ekle"
+                android:backgroundTint="#03DAC5"/>
         </LinearLayout>
 
         <!-- Başarılar -->
@@ -233,51 +236,44 @@
             android:padding="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🏆 Başarılar"
+                android:text="🏆 Başarı Ekle"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="16dp"/>
 
-            <LinearLayout
-                android:id="@+id/llAchievements"
+            <EditText
+                android:id="@+id/etAchievement"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:hint="Hackathon 2023 - 1. lik"
+                android:padding="12dp"
+                android:background="@drawable/edit_text_background"
+                android:layout_marginBottom="8dp"/>
+
+            <Button
+                android:id="@+id/btnAddAchievement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="+ Başarı Ekle"
+                android:backgroundTint="#03DAC5"/>
         </LinearLayout>
 
-        <!-- Butonlar -->
-        <LinearLayout
+        <!-- Kaydet Butonu -->
+        <Button
+            android:id="@+id/btnSaveProfile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:text="💾 Profili Kaydet"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="#FF6200EE"
             android:layout_margin="16dp"
-            android:gravity="center">
-
-            <Button
-                android:id="@+id/btnEditProfile"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="✏️ Profili Düzenle"
-                android:textSize="14sp"
-                android:backgroundTint="#FF6200EE"
-                android:layout_marginRight="8dp"/>
-
-            <Button
-                android:id="@+id/btnViewPortfolio"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="🏆 Portfolyo"
-                android:textSize="14sp"
-                android:backgroundTint="#03DAC5"
-                android:layout_marginLeft="8dp"/>
-        </LinearLayout>
+            android:padding="16dp"/>
 
     </LinearLayout>
 </ScrollView>

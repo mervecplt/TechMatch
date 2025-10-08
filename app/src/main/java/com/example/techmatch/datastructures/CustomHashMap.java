@@ -64,4 +64,75 @@ public class CustomHashMap<K, V> {
     public boolean isEmpty() {
         return size == 0;
     }
+
+    // ⭐ YENİ METODLAR - DataManager için gerekli ⭐
+
+    // Email kontrolü için - kullanıcı zaten kayıtlı mı?
+    public boolean containsKey(K key) {
+        int index = hash(key);
+        Entry<K, V> entry = table[index];
+
+        while (entry != null) {
+            if (entry.key.equals(key)) {
+                return true;
+            }
+            entry = entry.next;
+        }
+        return false;
+    }
+
+    // Kullanıcıyı silmek için
+    public void remove(K key) {
+        int index = hash(key);
+        Entry<K, V> entry = table[index];
+        Entry<K, V> prev = null;
+
+        while (entry != null) {
+            if (entry.key.equals(key)) {
+                if (prev == null) {
+                    table[index] = entry.next;
+                } else {
+                    prev.next = entry.next;
+                }
+                size--;
+                return;
+            }
+            prev = entry;
+            entry = entry.next;
+        }
+    }
+
+    // Tüm değerleri almak için (örnek kullanıcıları listelemek için)
+    public java.util.Collection<V> values() {
+        java.util.ArrayList<V> valueList = new java.util.ArrayList<>();
+        for (int i = 0; i < table.length; i++) {
+            Entry<K, V> entry = table[i];
+            while (entry != null) {
+                valueList.add(entry.value);
+                entry = entry.next;
+            }
+        }
+        return valueList;
+    }
+
+    // Tüm anahtarları almak için
+    public java.util.Set<K> keySet() {
+        java.util.HashSet<K> keySet = new java.util.HashSet<>();
+        for (int i = 0; i < table.length; i++) {
+            Entry<K, V> entry = table[i];
+            while (entry != null) {
+                keySet.add(entry.key);
+                entry = entry.next;
+            }
+        }
+        return keySet;
+    }
+
+    // HashMap'i temizlemek için
+    public void clear() {
+        for (int i = 0; i < table.length; i++) {
+            table[i] = null;
+        }
+        size = 0;
+    }
 }

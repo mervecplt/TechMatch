@@ -1,114 +1,51 @@
 package com.example.techmatch.models;
 
-import com.example.techmatch.datastructures.LinkedList;
-
 public class Project {
     private int id;
-    private String title;
+    private String name;
     private String category;
     private String description;
-    private LinkedList<String> requiredSkills;
-    private int creatorId;
-    private String creatorName;
-    private String date;
-    private String status;
-    private int teamSize;
-    private int maxTeamSize;
+    private int maxParticipants;
+    private int currentParticipants;
 
-    public Project(int id, String title, String category, String description,
-                   int creatorId, String creatorName) {
+    public Project(int id, String name, String category, String description, int maxParticipants) {
         this.id = id;
-        this.title = title;
+        this.name = name;
         this.category = category;
         this.description = description;
-        this.creatorId = creatorId;
-        this.creatorName = creatorName;
-        this.requiredSkills = new LinkedList<>();
-        this.status = "Açık";
-        this.teamSize = 1;
-        this.maxTeamSize = 5;
-        this.date = getCurrentDate();
+        this.maxParticipants = maxParticipants;
+        this.currentParticipants = 0;
     }
 
-    public void addRequiredSkill(String skill) {
-        requiredSkills.add(skill);
-    }
+    // Getters
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public String getCategory() { return category; }
+    public String getDescription() { return description; }
+    public int getMaxParticipants() { return maxParticipants; }
+    public int getCurrentParticipants() { return currentParticipants; }
 
-    public boolean addTeamMember() {
-        if (teamSize < maxTeamSize) {
-            teamSize++;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isFull() {
-        return teamSize >= maxTeamSize;
-    }
-
-    public int getId() {
-        return id;
-    }
-
+    // ⭐ YENİ: SearchActivity için eklenen metodlar
     public String getTitle() {
-        return title;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public LinkedList<String> getRequiredSkills() {
-        return requiredSkills;
-    }
-
-    public int getCreatorId() {
-        return creatorId;
-    }
-
-    public String getCreatorName() {
-        return creatorName;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public String getStatus() {
-        return status;
+        return name; // name alanını title olarak döndür
     }
 
     public int getTeamSize() {
-        return teamSize;
+        return currentParticipants; // Mevcut katılımcı sayısı
     }
 
-    public int getMaxTeamSize() {
-        return maxTeamSize;
+    // Setters
+    public void setName(String name) { this.name = name; }
+    public void setCategory(String category) { this.category = category; }
+    public void setDescription(String description) { this.description = description; }
+    public void addParticipant() { this.currentParticipants++; }
+
+    // Yardımcı metodlar
+    public boolean isFull() {
+        return currentParticipants >= maxParticipants;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setMaxTeamSize(int maxTeamSize) {
-        this.maxTeamSize = maxTeamSize;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    private String getCurrentDate() {
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-        return sdf.format(new java.util.Date());
-    }
-
-    @Override
-    public String toString() {
-        return title + " (" + category + ")";
+    public int getAvailableSlots() {
+        return maxParticipants - currentParticipants;
     }
 }
