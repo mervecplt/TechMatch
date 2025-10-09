@@ -68,8 +68,48 @@ public class User {
     public void setGpa(double gpa) { this.gpa = gpa; }
 
     // Liste yönetimi
-    public void addProject(String project) { this.projects.add(project); }
-    public void addWorkExperience(String experience) { this.workExperience.add(experience); }
-    public void addAchievement(String achievement) { this.achievements.add(achievement); }
-    public void addCertificate(String certificate) { this.certificates.add(certificate); }
+    public void addProject(String project) {
+        if (this.projects == null) {
+            this.projects = new ArrayList<>();
+        }
+        this.projects.add(project);
+    }
+
+    public void addWorkExperience(String experience) {
+        if (this.workExperience == null) {
+            this.workExperience = new ArrayList<>();
+        }
+        this.workExperience.add(experience);
+    }
+
+    public void addAchievement(String achievement) {
+        if (this.achievements == null) {
+            this.achievements = new ArrayList<>();
+        }
+        this.achievements.add(achievement);
+    }
+
+    public void addCertificate(String certificate) {
+        if (this.certificates == null) {
+            this.certificates = new ArrayList<>();
+        }
+        this.certificates.add(certificate);
+    }
+
+    // ⭐ Liste setter'ları (Gson için gerekli)
+    public void setProjects(List<String> projects) {
+        this.projects = (projects != null) ? projects : new ArrayList<>();
+    }
+
+    public void setWorkExperience(List<String> workExperience) {
+        this.workExperience = (workExperience != null) ? workExperience : new ArrayList<>();
+    }
+
+    public void setAchievements(List<String> achievements) {
+        this.achievements = (achievements != null) ? achievements : new ArrayList<>();
+    }
+
+    public void setCertificates(List<String> certificates) {
+        this.certificates = (certificates != null) ? certificates : new ArrayList<>();
+    }
 }

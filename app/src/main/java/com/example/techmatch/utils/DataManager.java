@@ -2,16 +2,19 @@ package com.example.techmatch.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import com.example.techmatch.datastructures.*;
 import com.example.techmatch.models.User;
 import com.example.techmatch.models.Project;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DataManager {
+    private static final String TAG = "DataManager";
     private static DataManager instance;
     private CustomHashMap<String, User> users; // Email -> User
     private CustomHashMap<Integer, User> usersById; // ID -> User
@@ -33,7 +36,11 @@ public class DataManager {
         navigationStack = new Stack<>();
         activityQueue = new Queue<>();
         sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        gson = new Gson();
+
+        // ⭐ Gson'u daha güvenli şekilde yapılandır
+        gson = new GsonBuilder()
+                .serializeNulls()
+                .create();
 
         loadUsersFromPrefs(); // Kayıtlı kullanıcıları yükle
         addSampleData(); // Örnek veriler
@@ -105,20 +112,57 @@ public class DataManager {
         return null;
     }
 
-    // ID'ye göre kullanıcı getir
+    // ⭐ DÜZELTME: ID'ye göre kullanıcı getir - AYNI REFERANSI DÖNDÜR
     public User getUserById(int userId) {
-        return usersById.get(userId);
+        User user = usersById.get(userId);
+        Log.d(TAG, "getUserById(" + userId + ") çağrıldı");
+        Log.d(TAG, "Kullanıcı bulundu: " + (user != null ? user.getName() : "NULL"));
+        if (user != null) {
+            Log.d(TAG, "Proje sayısı: " + (user.getProjects() != null ? user.getProjects().size() : "NULL"));
+        }
+        return user;
     }
 
-    // ⭐ YENİ: Kullanıcı bilgilerini güncelle
+    // ⭐ DÜZELTME: Kullanıcı bilgilerini güncelle
     public void updateUser(User user) {
         if (user != null) {
-            // HashMap'lerde güncelle
-            users.put(user.getEmail(), user);
-            usersById.put(user.getId(), user);
+            Log.d(TAG, "=== updateUser BAŞLADI ===");
+            Log.d(TAG, "Kullanıcı: " + user.getName() + " (ID: " + user.getId() + ")");
+            Log.d(TAG, "Projeler: " + (user.getProjects() != null ? user.getProjects().size() : "NULL"));
+            Log.d(TAG, "Proje listesi: " + user.getProjects());
+
+            // ⚠️ ÖNEMLİ: HashMap'de AYNI REFERANSI kullan
+            // Yeni nesne oluşturma, mevcut nesneyi güncelle
+            User existingUser = usersById.get(user.getId());
+            if (existingUser != null && existingUser != user) {
+                Log.w(TAG, "UYARI: Farklı User nesnesi tespit edildi! Senkronize ediliyor...");
+                // Mevcut nesneyi güncelle
+                existingUser.setBio(user.getBio());
+                existingUser.setSkills(user.getSkills());
+                existingUser.setUniversity(user.getUniversity());
+                existingUser.setGraduationYear(user.getGraduationYear());
+                existingUser.setGpa(user.getGpa());
+                existingUser.setProjects(user.getProjects());
+                existingUser.setWorkExperience(user.getWorkExperience());
+                existingUser.setAchievements(user.getAchievements());
+                existingUser.setCertificates(user.getCertificates());
+
+                // HashMap'leri güncelle
+                users.put(existingUser.getEmail(), existingUser);
+                usersById.put(existingUser.getId(), existingUser);
+            } else {
+                // Zaten aynı referans, direkt güncelle
+                users.put(user.getEmail(), user);
+                usersById.put(user.getId(), user);
+            }
+
+            Log.d(TAG, "HashMap'e kaydedildi");
 
             // SharedPreferences'e kaydet (kalıcı)
             saveUsersToPrefs();
+
+            Log.d(TAG, "SharedPreferences'e kaydedildi");
+            Log.d(TAG, "=== updateUser BİTTİ ===\n");
         }
     }
 
@@ -144,7 +188,7 @@ public class DataManager {
     // Başarıları getir (PortfolioActivity için)
     public List<String> getAchievements(int userId) {
         User user = getUserById(userId);
-        if (user != null) {
+        if (user != null && user.getAchievements() != null) {
             return user.getAchievements();
         }
         return new ArrayList<>();
@@ -219,31 +263,84 @@ public class DataManager {
 
     // ==================== KALICI DEPOLAMA ====================
 
-    // Kullanıcıları SharedPreferences'e kaydet
+    // ⭐ DÜZELTİLDİ: Kullanıcıları SharedPreferences'e kaydet
     private void saveUsersToPrefs() {
-        List<User> userList = new ArrayList<>();
+        try {
+            Log.d(TAG, "=== saveUsersToPrefs BAŞLADI ===");
+            List<User> userList = new ArrayList<>();
 
-        for (User user : users.values()) {
-            userList.add(user);
-        }
+            for (User user : users.values()) {
+                // ⭐ Null kontrolü ekle
+                if (user != null) {
+                    Log.d(TAG, "Kaydediliyor: " + user.getName() + " - Projeler: " +
+                            (user.getProjects() != null ? user.getProjects().size() : "NULL"));
 
-        String json = gson.toJson(userList);
-        sharedPreferences.edit().putString(KEY_USERS, json).apply();
-    }
-
-    // Kullanıcıları SharedPreferences'ten yükle
-    private void loadUsersFromPrefs() {
-        String json = sharedPreferences.getString(KEY_USERS, null);
-        if (json != null) {
-            Type listType = new TypeToken<ArrayList<User>>(){}.getType();
-            List<User> userList = gson.fromJson(json, listType);
-
-            if (userList != null) {
-                for (User user : userList) {
-                    users.put(user.getEmail(), user);
-                    usersById.put(user.getId(), user);
+                    // Liste alanlarının null olmamasını garanti et
+                    if (user.getProjects() == null) {
+                        user.setProjects(new ArrayList<>());
+                    }
+                    if (user.getWorkExperience() == null) {
+                        user.setWorkExperience(new ArrayList<>());
+                    }
+                    if (user.getAchievements() == null) {
+                        user.setAchievements(new ArrayList<>());
+                    }
+                    if (user.getCertificates() == null) {
+                        user.setCertificates(new ArrayList<>());
+                    }
+                    userList.add(user);
                 }
             }
+
+            String json = gson.toJson(userList);
+            sharedPreferences.edit().putString(KEY_USERS, json).apply();
+            Log.d(TAG, "SharedPreferences'e yazıldı - " + userList.size() + " kullanıcı");
+            Log.d(TAG, "=== saveUsersToPrefs BİTTİ ===\n");
+        } catch (Exception e) {
+            Log.e(TAG, "HATA: saveUsersToPrefs başarısız", e);
+            e.printStackTrace();
+        }
+    }
+
+    // ⭐ DÜZELTİLDİ: Kullanıcıları SharedPreferences'ten yükle
+    private void loadUsersFromPrefs() {
+        try {
+            Log.d(TAG, "=== loadUsersFromPrefs BAŞLADI ===");
+            String json = sharedPreferences.getString(KEY_USERS, null);
+            if (json != null && !json.isEmpty()) {
+                Type listType = new TypeToken<ArrayList<User>>(){}.getType();
+                List<User> userList = gson.fromJson(json, listType);
+
+                if (userList != null) {
+                    Log.d(TAG, "Yüklenen kullanıcı sayısı: " + userList.size());
+                    for (User user : userList) {
+                        if (user != null) {
+                            // ⭐ Liste alanlarının null olmamasını garanti et
+                            if (user.getProjects() == null) {
+                                user.setProjects(new ArrayList<>());
+                            }
+                            if (user.getWorkExperience() == null) {
+                                user.setWorkExperience(new ArrayList<>());
+                            }
+                            if (user.getAchievements() == null) {
+                                user.setAchievements(new ArrayList<>());
+                            }
+                            if (user.getCertificates() == null) {
+                                user.setCertificates(new ArrayList<>());
+                            }
+
+                            Log.d(TAG, "Yüklendi: " + user.getName() + " - Projeler: " + user.getProjects().size());
+
+                            users.put(user.getEmail(), user);
+                            usersById.put(user.getId(), user);
+                        }
+                    }
+                }
+            }
+            Log.d(TAG, "=== loadUsersFromPrefs BİTTİ ===\n");
+        } catch (Exception e) {
+            Log.e(TAG, "HATA: loadUsersFromPrefs başarısız", e);
+            e.printStackTrace();
         }
     }
 
