@@ -54,10 +54,28 @@
             android:name=".activities.PortfolioActivity"
             android:exported="false" />
 
-        <!-- ⭐ YENİ: PROFIL DÜZENLEME EKRANI -->
+        <!-- ⭐ PROFIL DÜZENLEME EKRANI -->
         <activity
             android:name=".activities.EditProfileActivity"
             android:exported="false" />
+
+        <!-- 🚀 YENİ: TAKIM SİSTEMİ AKTİVİTELERİ -->
+        <activity
+            android:name=".activities.TeamCategoriesActivity"
+            android:exported="false"
+            android:label="Teknofest Kategorileri" />
+
+        <activity
+            android:name=".activities.TeamListActivity"
+            android:exported="false"
+            android:label="Takımlar" />
+
+        <activity
+            android:name=".activities.TeamDetailActivity"
+            android:exported="false"
+            android:label="Takım Detayı" />
+
+
 
     </application>
 

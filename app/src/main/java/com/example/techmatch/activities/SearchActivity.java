@@ -1,5 +1,6 @@
 package com.example.techmatch.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -23,8 +24,13 @@ public class SearchActivity extends AppCompatActivity {
     private EditText etSearchQuery;
     private Button btnSearchUsers;
     private Button btnSearchProjects;
-    private TextView btnBack;  // TextView olarak tanımlandı!
+    private TextView btnBack;
     private ListView lvSearchResults;
+
+    // ⭐ YENİ: Kategori butonları
+    private Button btnCategoryAI;
+    private Button btnCategoryIoT;
+    private Button btnCategoryMobile;
 
     private ArrayAdapter<String> adapter;
     private List<String> searchResults;
@@ -41,6 +47,11 @@ public class SearchActivity extends AppCompatActivity {
         btnSearchProjects = findViewById(R.id.btnSearchProjects);
         btnBack = findViewById(R.id.btnBack);
         lvSearchResults = findViewById(R.id.lvSearchResults);
+
+        // ⭐ YENİ: Kategori butonlarını bağla
+        btnCategoryAI = findViewById(R.id.btnCategoryAI);
+        btnCategoryIoT = findViewById(R.id.btnCategoryIoT);
+        btnCategoryMobile = findViewById(R.id.btnCategoryMobile);
 
         searchResults = new ArrayList<>();
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, searchResults);
@@ -66,6 +77,35 @@ public class SearchActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        // ⭐ YENİ: Kategori buton click listener'ları
+        btnCategoryAI.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openTeamList("Yapay Zeka");
+            }
+        });
+
+        btnCategoryIoT.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openTeamList("IoT");
+            }
+        });
+
+        btnCategoryMobile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openTeamList("Mobil Uygulama");
+            }
+        });
+    }
+
+    // ⭐ YENİ: TeamListActivity'yi aç
+    private void openTeamList(String category) {
+        Intent intent = new Intent(SearchActivity.this, TeamListActivity.class);
+        intent.putExtra("category", category);
+        startActivity(intent);
     }
 
     private void searchUsers() {

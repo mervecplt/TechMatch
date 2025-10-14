@@ -1,122 +1,244 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#F5F5F5">
+    android:background="#F8F9FA"
+    android:fillViewport="true">
 
-    <!-- Toolbar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="#FF6200EE"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="← Arama"
-            android:textSize="20sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:id="@+id/btnBack"/>
-    </LinearLayout>
-
-    <!-- Arama Çubuğu -->
-    <EditText
-        android:id="@+id/etSearchQuery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="İsim, beceri veya kategori ara..."
-        android:padding="16dp"
-        android:layout_margin="16dp"
-        android:background="#FFFFFF"
-        android:drawableLeft="@android:drawable/ic_menu_search"/>
-
-    <!-- Filtre Butonları -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:gravity="center">
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btnSearchUsers"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Kullanıcılar"
-            android:backgroundTint="#FF6200EE"
-            android:layout_margin="4dp"/>
-
-        <Button
-            android:id="@+id/btnSearchProjects"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Projeler"
-            android:backgroundTint="#03DAC5"
-            android:layout_margin="4dp"/>
-    </LinearLayout>
-
-    <!-- Kategori Filtreleri -->
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp">
-
+        <!-- Modern Header with Gradient -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:background="#6200EE"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp"
+            android:elevation="4dp">
 
-            <Button
-                android:id="@+id/btnCatAI"
-                android:layout_width="wrap_content"
+            <!-- Header Top Bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Yapay Zeka"
-                android:backgroundTint="#E0E0E0"
-                android:textColor="#000000"
-                android:layout_margin="4dp"/>
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:gravity="center_vertical">
 
-            <Button
-                android:id="@+id/btnCatIoT"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="IoT"
-                android:backgroundTint="#E0E0E0"
-                android:textColor="#000000"
-                android:layout_margin="4dp"/>
+                <TextView
+                    android:id="@+id/btnBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="← Geri"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
 
-            <Button
-                android:id="@+id/btnCatMobile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mobil Uygulama"
-                android:backgroundTint="#E0E0E0"
-                android:textColor="#000000"
-                android:layout_margin="4dp"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Arama"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
 
-            <Button
-                android:id="@+id/btnCatRobotics"
-                android:layout_width="wrap_content"
+                <View
+                    android:layout_width="60dp"
+                    android:layout_height="1dp"/>
+            </LinearLayout>
+
+            <!-- Search Box -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Robotik"
-                android:backgroundTint="#E0E0E0"
-                android:textColor="#000000"
-                android:layout_margin="4dp"/>
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp">
+
+                <EditText
+                    android:id="@+id/etSearchQuery"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:hint="İsim, beceri veya kategori ara..."
+                    android:textColorHint="#9E9E9E"
+                    android:textSize="16sp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:background="@android:color/white"
+                    android:elevation="3dp"
+                    android:drawablePadding="12dp"/>
+            </LinearLayout>
         </LinearLayout>
-    </HorizontalScrollView>
 
-    <!-- Sonuç Listesi -->
-    <ListView
-        android:id="@+id/lvSearchResults"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="#E0E0E0"
-        android:dividerHeight="1dp"/>
+        <!-- Content Area -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-</LinearLayout>
+            <!-- Search Type Buttons Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@android:color/white"
+                android:padding="16dp"
+                android:elevation="2dp"
+                android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="8dp">
+
+                        <Button
+                            android:id="@+id/btnSearchUsers"
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:text="👤\n\nKullanıcılar"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:background="#6200EE"
+                            android:elevation="4dp"
+                            android:stateListAnimator="@null"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="8dp">
+
+                        <Button
+                            android:id="@+id/btnSearchProjects"
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:text="📁\n\nProjeler"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:background="#7C4DFF"
+                            android:elevation="4dp"
+                            android:stateListAnimator="@null"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Category Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Kategorilere Göre Ara"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#212121"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- Category Buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- AI Category -->
+                <Button
+                    android:id="@+id/btnCategoryAI"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:text="🤖  Yapay Zeka"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textAlignment="textStart"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
+                    android:background="#FF6B6B"
+                    android:elevation="3dp"
+                    android:layout_marginBottom="12dp"
+                    android:stateListAnimator="@null"/>
+
+                <!-- IoT Category -->
+                <Button
+                    android:id="@+id/btnCategoryIoT"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:text="🌐  IoT"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textAlignment="textStart"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
+                    android:background="#4ECDC4"
+                    android:elevation="3dp"
+                    android:layout_marginBottom="12dp"
+                    android:stateListAnimator="@null"/>
+
+                <!-- Mobile Category -->
+                <Button
+                    android:id="@+id/btnCategoryMobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:text="📱  Mobil Uygulama"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textAlignment="textStart"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"
+                    android:background="#45B7D1"
+                    android:elevation="3dp"
+                    android:layout_marginBottom="16dp"
+                    android:stateListAnimator="@null"/>
+            </LinearLayout>
+
+            <!-- Search Results Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@android:color/white"
+                android:elevation="2dp"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Arama Sonuçları"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#212121"
+                    android:padding="8dp"/>
+
+                <ListView
+                    android:id="@+id/lvSearchResults"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:divider="#E0E0E0"
+                    android:dividerHeight="1dp"
+                    android:padding="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

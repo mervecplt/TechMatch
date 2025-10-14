@@ -7,14 +7,16 @@ public class Project {
     private String description;
     private int maxParticipants;
     private int currentParticipants;
+    private String advisor; // ⭐ YENİ: Danışman hoca
 
-    public Project(int id, String name, String category, String description, int maxParticipants) {
+    public Project(int id, String name, String category, String description, int maxParticipants, String advisor) {
         this.id = id;
         this.name = name;
         this.category = category;
         this.description = description;
         this.maxParticipants = maxParticipants;
         this.currentParticipants = 0;
+        this.advisor = advisor;
     }
 
     // Getters
@@ -24,6 +26,7 @@ public class Project {
     public String getDescription() { return description; }
     public int getMaxParticipants() { return maxParticipants; }
     public int getCurrentParticipants() { return currentParticipants; }
+    public String getAdvisor() { return advisor; } // ⭐ YENİ
 
     // ⭐ YENİ: SearchActivity için eklenen metodlar
     public String getTitle() {
@@ -38,6 +41,7 @@ public class Project {
     public void setName(String name) { this.name = name; }
     public void setCategory(String category) { this.category = category; }
     public void setDescription(String description) { this.description = description; }
+    public void setAdvisor(String advisor) { this.advisor = advisor; } // ⭐ YENİ
     public void addParticipant() { this.currentParticipants++; }
 
     // Yardımcı metodlar

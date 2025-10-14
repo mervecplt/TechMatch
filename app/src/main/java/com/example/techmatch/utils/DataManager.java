@@ -131,7 +131,7 @@ public class DataManager {
             Log.d(TAG, "Projeler: " + (user.getProjects() != null ? user.getProjects().size() : "NULL"));
             Log.d(TAG, "Proje listesi: " + user.getProjects());
 
-            // ⚠️ ÖNEMLİ: HashMap'de AYNI REFERANSI kullan
+            // ⚠ ÖNEMLİ: HashMap'de AYNI REFERANSI kullan
             // Yeni nesne oluşturma, mevcut nesneyi güncelle
             User existingUser = usersById.get(user.getId());
             if (existingUser != null && existingUser != user) {
@@ -356,16 +356,43 @@ public class DataManager {
 
         // Örnek projeler
         if (projects.size() == 0) {
+            // Yapay Zeka projeleri
             Project p1 = new Project(1, "AI Chatbot", "Yapay Zeka",
-                    "Doğal dil işleme ile chatbot", 5);
-            Project p2 = new Project(2, "IoT Akıllı Ev", "IoT",
-                    "Akıllı ev otomasyonu", 3);
-            Project p3 = new Project(3, "Mobil Oyun", "Mobile",
-                    "Unity ile mobil oyun", 4);
+                    "Doğal dil işleme ile chatbot geliştirme projesi", 5, "Prof. Dr. Ali Yılmaz");
+            p1.addParticipant();
+            p1.addParticipant(); // 2 kişi var
+
+            Project p2 = new Project(2, "Görüntü İşleme Sistemi", "Yapay Zeka",
+                    "Derin öğrenme ile nesne tanıma", 4, "Doç. Dr. Zeynep Kara");
+            p2.addParticipant(); // 1 kişi var
+
+            // IoT projeleri
+            Project p3 = new Project(3, "Akıllı Ev Otomasyonu", "IoT",
+                    "Akıllı ev sistemleri ve IoT sensörleri", 3, "Dr. Mehmet Demir");
+            p3.addParticipant();
+            p3.addParticipant(); // 2 kişi var
+
+            Project p4 = new Project(4, "Akıllı Tarım Sistemi", "IoT",
+                    "Tarımda IoT ve sensör teknolojileri", 4, "Prof. Dr. Ayşe Öztürk");
+            // 0 kişi var
+
+            // Mobil Uygulama projeleri
+            Project p5 = new Project(5, "Eğitim Uygulaması", "Mobil Uygulama",
+                    "Kotlin ile Android eğitim uygulaması", 4, "Dr. Can Yıldız");
+            p5.addParticipant();
+            p5.addParticipant();
+            p5.addParticipant(); // 3 kişi var
+
+            Project p6 = new Project(6, "Sağlık Takip Uygulaması", "Mobil Uygulama",
+                    "React Native ile sağlık takip uygulaması", 3, "Doç. Dr. Elif Aslan");
+            p6.addParticipant(); // 1 kişi var
 
             addProject(p1);
             addProject(p2);
             addProject(p3);
+            addProject(p4);
+            addProject(p5);
+            addProject(p6);
         }
     }
 }
