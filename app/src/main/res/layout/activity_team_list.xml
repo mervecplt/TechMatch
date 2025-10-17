@@ -5,41 +5,52 @@
     android:orientation="vertical"
     android:background="#F5F5F5">
 
-    <!-- Header -->
+    <!-- Modern Header with Gradient -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#6200EE"
-        android:padding="16dp"
-        android:gravity="center_vertical">
+        android:orientation="vertical"
+        android:background="@drawable/gradient_background"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp"
+        android:elevation="4dp">
 
-        <TextView
-            android:id="@+id/btnBack"
-            android:layout_width="wrap_content"
+        <!-- Header Top Bar -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="← Geri"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="8dp"/>
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/tvCategoryTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Kategori"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:gravity="center"/>
+            <TextView
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="←"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
 
-        <View
-            android:layout_width="60dp"
-            android:layout_height="1dp"/>
+            <TextView
+                android:id="@+id/tvCategoryTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Yapay Zeka"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:gravity="center"/>
 
+            <View
+                android:layout_width="40dp"
+                android:layout_height="1dp"/>
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Liste -->

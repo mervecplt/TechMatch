@@ -83,11 +83,11 @@
     <Button
         android:id="@+id/btnJoin"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:text="Takıma Katıl"
-        android:textColor="#FFFFFF"
-        android:background="#6200EE"
-        android:textStyle="bold"
-        android:padding="12dp"/>
+        android:textSize="18sp"
+        android:backgroundTint="#6200EE"
+        android:layout_marginBottom="16dp"/>
+
 
 </LinearLayout>
