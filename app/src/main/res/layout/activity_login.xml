@@ -70,30 +70,6 @@
             android:background="@drawable/button_background"
             android:layout_marginBottom="24dp" />
 
-        <!-- Test Hesapları Bilgisi -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Test Hesapları:"
-            android:textSize="12sp"
-            android:textColor="#999999"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ahmet@test.com / 123456"
-            android:textSize="11sp"
-            android:textColor="#999999"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ayse@test.com / 123456"
-            android:textSize="11sp"
-            android:textColor="#999999"
-            android:layout_marginBottom="24dp" />
 
         <!-- Kayıt Ol Linki -->
         <LinearLayout

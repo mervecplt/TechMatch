@@ -27,11 +27,10 @@ public class MainActivity extends AppCompatActivity {
         // View'ları bağla
         btnSearch = findViewById(R.id.btnSearch);
         btnProfile = findViewById(R.id.btnProfile);
-        tvUserCount = findViewById(R.id.tvUserCount);
-        tvProjectCount = findViewById(R.id.tvProjectCount);
+
 
         // İstatistikleri güncelle
-        updateStats();
+
 
         // Buton tıklama olayları
         btnSearch.setOnClickListener(v -> {
@@ -50,11 +49,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void updateStats() {
-        int userCount = dataManager.getAllUsers().size();
-        int projectCount = dataManager.getAllProjects().size();
 
-        tvUserCount.setText(String.valueOf(userCount));
-        tvProjectCount.setText(String.valueOf(projectCount));
-    }
 }

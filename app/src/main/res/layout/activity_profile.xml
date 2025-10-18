@@ -9,23 +9,51 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Toolbar -->
+        <!-- Modern Header with Gradient -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="#FF6200EE"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="16dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/gradient_background"
+            android:paddingTop="16dp"
+            android:paddingBottom="24dp"
+            android:elevation="4dp">
 
-            <TextView
-                android:id="@+id/btnBack"
-                android:layout_width="wrap_content"
+            <!-- Header Top Bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="← Profil"
-                android:textSize="20sp"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"/>
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/btnBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="←"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Profil"
+                    android:textColor="#FFFFFF"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <View
+                    android:layout_width="40dp"
+                    android:layout_height="1dp"/>
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Profil Kartı -->
@@ -263,20 +291,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="✏️ Profili Düzenle"
+                android:text="Profili Düzenle"
                 android:textSize="14sp"
                 android:backgroundTint="#FF6200EE"
                 android:layout_marginRight="8dp"/>
 
-            <Button
-                android:id="@+id/btnViewPortfolio"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="🏆 Portfolyo"
-                android:textSize="14sp"
-                android:backgroundTint="#03DAC5"
-                android:layout_marginLeft="8dp"/>
+
         </LinearLayout>
 
     </LinearLayout>

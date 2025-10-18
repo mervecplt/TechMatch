@@ -21,7 +21,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView tvUserBio, tvUserSkills;
     private TextView tvEducationInfo, tvGpaInfo;
     private LinearLayout llProjects, llWorkExperience, llAchievements;
-    private Button btnViewPortfolio, btnEditProfile;
+    private Button btnEditProfile;
 
     private DataManager dataManager;
     private User currentUser;
@@ -43,7 +43,6 @@ public class ProfileActivity extends AppCompatActivity {
         tvUserEmail = findViewById(R.id.tvUserEmail);
         tvUserBio = findViewById(R.id.tvUserBio);
         tvUserSkills = findViewById(R.id.tvUserSkills);
-        btnViewPortfolio = findViewById(R.id.btnViewPortfolio);
         btnEditProfile = findViewById(R.id.btnEditProfile);
 
         // Yeni alanlar
@@ -75,13 +74,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Geri butonu
         btnBack.setOnClickListener(v -> finish());
-
-        // Portfolyo butonu
-        btnViewPortfolio.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, PortfolioActivity.class);
-            intent.putExtra("USER_ID", currentUser.getId());
-            startActivity(intent);
-        });
 
         // Profil düzenle butonu
         btnEditProfile.setOnClickListener(v -> {
