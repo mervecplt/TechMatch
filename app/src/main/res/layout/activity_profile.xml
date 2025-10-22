@@ -90,7 +90,7 @@
                 android:id="@+id/tvUserDepartment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bilgisayar Mühendisliği"
+                android:text=""
                 android:textSize="16sp"
                 android:textColor="#666666"
                 android:layout_gravity="center"
@@ -282,19 +282,35 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="16dp"
-            android:gravity="center">
+            android:orientation="vertical"
+            android:layout_margin="16dp">
 
+            <!-- Profili Düzenle Butonu -->
             <Button
                 android:id="@+id/btnEditProfile"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Profili Düzenle"
-                android:textSize="14sp"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 android:backgroundTint="#FF6200EE"
-                android:layout_marginRight="8dp"/>
+                android:textColor="#FFFFFF"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- ⭐ YENİ - Hesabımı Sil Butonu -->
+            <Button
+                android:id="@+id/btnDeleteAccount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🗑️ Hesabımı Sil"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#D32F2F"
+                android:padding="16dp"
+                android:layout_marginBottom="8dp"/>
+
 
 
         </LinearLayout>

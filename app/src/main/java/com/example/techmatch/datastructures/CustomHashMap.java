@@ -115,24 +115,5 @@ public class CustomHashMap<K, V> {
         return valueList;
     }
 
-    // Tüm anahtarları almak için
-    public java.util.Set<K> keySet() {
-        java.util.HashSet<K> keySet = new java.util.HashSet<>();
-        for (int i = 0; i < table.length; i++) {
-            Entry<K, V> entry = table[i];
-            while (entry != null) {
-                keySet.add(entry.key);
-                entry = entry.next;
-            }
-        }
-        return keySet;
-    }
 
-    // HashMap'i temizlemek için
-    public void clear() {
-        for (int i = 0; i < table.length; i++) {
-            table[i] = null;
-        }
-        size = 0;
-    }
 }

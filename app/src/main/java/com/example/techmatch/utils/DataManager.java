@@ -12,6 +12,8 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
+
 
 public class DataManager {
     private static final String TAG = "DataManager";
@@ -71,7 +73,7 @@ public class DataManager {
                 name + " " + surname,
                 email,
                 password,
-                "Öğrenci", // Varsayılan departman
+                "", // Varsayılan departman
                 ""  // Bio boş
         );
 
@@ -166,6 +168,75 @@ public class DataManager {
         }
     }
 
+    // ⭐ YENİ METOD - Mevcut kullanıcıyı sil
+    public boolean deleteCurrentUser() {
+        User currentUser = getCurrentUser();
+
+        if (currentUser == null) {
+            Log.w(TAG, "deleteCurrentUser: Giriş yapılmamış!");
+            return false; // Giriş yapılmamış
+        }
+
+        Log.d(TAG, "=== deleteCurrentUser BAŞLADI ===");
+        Log.d(TAG, "Silinecek kullanıcı: " + currentUser.getName() + " (" + currentUser.getEmail() + ")");
+
+        // 1. HashMap'lerden sil
+        users.remove(currentUser.getEmail());      // Email ile sil
+        usersById.remove(currentUser.getId());     // ID ile sil
+
+        Log.d(TAG, "HashMap'lerden silindi");
+        Log.d(TAG, "Kalan kullanıcı sayısı: " + users.size());
+
+        // 2. SharedPreferences'ten currentUser'ı kaldır
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(KEY_CURRENT_USER);  // Mevcut kullanıcı bilgisini sil
+        editor.apply();
+
+        Log.d(TAG, "CurrentUser SharedPreferences'ten temizlendi");
+
+        // 3. Güncel kullanıcı listesini kaydet
+        saveUsersToPrefs();
+
+        Log.d(TAG, "Güncel liste SharedPreferences'e kaydedildi");
+        Log.d(TAG, "=== deleteCurrentUser BİTTİ ===\n");
+
+        return true;  // Başarılı
+    }
+
+    // ⭐ YENİ METOD (BONUS) - Belirli bir kullanıcıyı sil (Admin için kullanılabilir)
+    public boolean deleteUser(String email) {
+        if (!users.containsKey(email)) {
+            Log.w(TAG, "deleteUser: Kullanıcı bulunamadı: " + email);
+            return false; // Kullanıcı bulunamadı
+        }
+
+        Log.d(TAG, "=== deleteUser BAŞLADI ===");
+        Log.d(TAG, "Silinecek email: " + email);
+
+        User user = users.get(email);
+
+        // HashMap'lerden sil
+        users.remove(email);
+        usersById.remove(user.getId());
+
+        Log.d(TAG, "Kullanıcı silindi: " + user.getName());
+        Log.d(TAG, "Kalan kullanıcı sayısı: " + users.size());
+
+        // Eğer silinen kullanıcı şu anki kullanıcıysa, çıkış yap
+        User currentUser = getCurrentUser();
+        if (currentUser != null && currentUser.getEmail().equals(email)) {
+            logout();
+            Log.d(TAG, "Silinen kullanıcı mevcut kullanıcıydı, çıkış yapıldı");
+        }
+
+        // Kaydet
+        saveUsersToPrefs();
+
+        Log.d(TAG, "=== deleteUser BİTTİ ===\n");
+
+        return true;
+    }
+
     // Çıkış yap
     public void logout() {
         sharedPreferences.edit().remove(KEY_CURRENT_USER).apply();
@@ -184,6 +255,46 @@ public class DataManager {
         }
         return userList;
     }
+
+    // ✅ YENİ METOD: Kullanıcı arama (isim, email, departman)
+    public List<User> searchUsers(String query) {
+        if (query == null) return Collections.emptyList();
+        String q = query.trim();
+        if (q.isEmpty() || q.length() < 3) { // En az 3 harf
+            Log.d("Arama", "Geçersiz sorgu (çok kısa): " + q);
+            return Collections.emptyList();
+        }
+
+        if (!q.matches("^[\\p{L}\\p{N}@._\\-\\s]{3,}$")) {
+            Log.d("Arama", "Geçersiz karakter içeriyor: " + q);
+            return Collections.emptyList();
+        }
+
+        List<User> allUsers = getAllUsers();
+        List<User> searchResults = new ArrayList<>();
+        String lowerQuery = q.toLowerCase();
+
+        for (User user : allUsers) {
+            if (user == null) continue;
+
+            String name = user.getName() != null ? user.getName().toLowerCase() : "";
+            String email = user.getEmail() != null ? user.getEmail().toLowerCase() : "";
+            String department = user.getDepartment() != null ? user.getDepartment().toLowerCase() : "";
+
+            // ✅ sadece başında veya kelime sınırında eşleşen sonuçları al
+            boolean matchesName = name.startsWith(lowerQuery) || name.contains(" " + lowerQuery);
+            boolean matchesEmail = email.startsWith(lowerQuery);
+            boolean matchesDepartment = department.startsWith(lowerQuery);
+
+            if (matchesName || matchesEmail || matchesDepartment) {
+                searchResults.add(user);
+            }
+        }
+
+        return searchResults;
+    }
+
+
 
     // Başarıları getir (PortfolioActivity için)
     public List<String> getAchievements(int userId) {
@@ -252,6 +363,37 @@ public class DataManager {
         }
         return projectList;
     }
+    // ✅ YENİ METOD: Proje arama (isim, kategori, açıklama)
+    public List<Project> searchProjects(String query) {
+        if (query == null) return Collections.emptyList();
+        String q = query.trim();
+        if (q.isEmpty() || q.length() < 3) return Collections.emptyList();
+
+        List<Project> allProjects = getAllProjects();
+        List<Project> results = new ArrayList<>();
+        String lowerQuery = q.toLowerCase();
+
+        for (Project project : allProjects) {
+            if (project == null) continue;
+
+            String title = project.getTitle() != null ? project.getTitle().toLowerCase() : "";
+            String category = project.getCategory() != null ? project.getCategory().toLowerCase() : "";
+            String desc = project.getDescription() != null ? project.getDescription().toLowerCase() : "";
+
+            // sadece başında veya kelime içinde geçen ama kısa olmayanları al
+            boolean matchesTitle = title.startsWith(lowerQuery) || title.contains(" " + lowerQuery);
+            boolean matchesCategory = category.startsWith(lowerQuery);
+            boolean matchesDesc = desc.contains(" " + lowerQuery);
+
+            if (matchesTitle || matchesCategory || matchesDesc) {
+                results.add(project);
+            }
+        }
+
+        return results;
+    }
+
+
 
     public int getUserCount() {
         return users.size();
@@ -394,5 +536,49 @@ public class DataManager {
             addProject(p5);
             addProject(p6);
         }
+    }
+
+    // ==================== PROJE KATILIM YÖNETİMİ ====================
+    // Kullanıcıyı projeye ekle
+    public boolean addUserToProject(int userId, int projectId) {
+        User user = getUserById(userId);
+        Project project = getProjectById(projectId);
+
+        if (user == null || project == null) {
+            Log.e(TAG, "Kullanici veya proje bulunamadi!");
+            return false;
+        }
+
+        // Kullanıcı zaten bu projede mi kontrol et
+        if (user.getProjects() == null) {
+            user.setProjects(new ArrayList<String>());
+        }
+
+        String projectIdStr = String.valueOf(projectId);
+
+        for (String existingProjectId : user.getProjects()) {
+            if (existingProjectId.equals(projectIdStr)) {
+                Log.w(TAG, "Kullanici zaten bu projede!");
+                return false; // Zaten katılmış
+            }
+        }
+
+        // Proje dolu mu kontrol et
+        if (project.getCurrentParticipants() >= project.getMaxParticipants()) {
+            Log.w(TAG, "Proje dolu!");
+            return false; // Proje dolu
+        }
+
+        // Kullanıcıyı projeye ekle
+        user.getProjects().add(projectIdStr);
+        project.addParticipant(); // Katılımcı sayısını artır
+
+        // Kaydet
+        updateUser(user);
+
+        Log.d(TAG, user.getName() + " projeye eklendi: " + project.getName());
+        Log.d(TAG, "Yeni katilimci sayisi: " + project.getCurrentParticipants());
+
+        return true; // Başarılı
     }
 }

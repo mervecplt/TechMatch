@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.techmatch.R;
 import com.example.techmatch.adapters.TeamListAdapter;
 import com.example.techmatch.models.Project;
+import com.example.techmatch.models.User;
 import com.example.techmatch.utils.DataManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,18 +82,36 @@ public class TeamListActivity extends AppCompatActivity {
         lvTeams.setAdapter(adapter);
     }
 
+    // ✅ DÜZELTME: Kullanıcıyı direkt projeye ekle
     private void joinTeam(Project project) {
-        if (project.isFull()) {
-            Toast.makeText(this, "Bu takım dolu!", Toast.LENGTH_SHORT).show();
+        // ✅ Mevcut kullanıcıyı al
+        User currentUser = dataManager.getCurrentUser();
+
+        if (currentUser == null) {
+            Toast.makeText(this, "Lütfen giriş yapın", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Kullanıcıyı takıma ekle
-        project.addParticipant();
+        // ✅ Takım dolu mu kontrol et
+        if (project.isFull()) {
+            Toast.makeText(this, "Bu takım dolu! ❌", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        // Adapter'ı güncelle
-        adapter.notifyDataSetChanged();
+        // ✅ DataManager üzerinden kullanıcıyı projeye ekle
+        boolean success = dataManager.addUserToProject(currentUser.getId(), project.getId());
 
-        Toast.makeText(this, "Takıma katılma isteği gönderildi!", Toast.LENGTH_SHORT).show();
+        if (success) {
+            // ✅ Başarılı - Adapter'ı güncelle
+            adapter.notifyDataSetChanged();
+            Toast.makeText(this, "Projeye katıldınız! ✅", Toast.LENGTH_SHORT).show();
+        } else {
+            // ❌ Başarısız (zaten katılmış veya proje dolu)
+            if (project.getCurrentParticipants() >= project.getMaxParticipants()) {
+                Toast.makeText(this, "Proje dolu! ❌", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Zaten bu projeye katılmışsınız! ⚠️", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.example.techmatch.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -22,6 +23,7 @@ import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
 
+    private static final String TAG = "SearchActivity";
     private DataManager dataManager;
 
     private EditText etSearchQuery;
@@ -112,6 +114,23 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
+    // ✅ YENİ METOD: Activity her göründüğünde arama sonuçlarını güncelle
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.d(TAG, "=== onResume() çağrıldı ===");
+
+        // Eğer daha önce arama yapılmışsa, sonuçları yenile
+        String currentQuery = etSearchQuery.getText().toString().trim();
+        if (!currentQuery.isEmpty()) {
+            Log.d(TAG, "Arama yenileniyor: " + currentQuery);
+            performSearch(); // Aramayı tekrar yap (güncel verilerle)
+        } else {
+            Log.d(TAG, "Arama kutusu boş, yenileme yapılmadı");
+        }
+    }
+
     // TeamListActivity'yi aç
     private void openTeamList(String category) {
         Intent intent = new Intent(SearchActivity.this, TeamListActivity.class);
@@ -128,60 +147,62 @@ public class SearchActivity extends AppCompatActivity {
             return;
         }
 
+        Log.d(TAG, "\n=== ARAMA BAŞLADI ===");
+        Log.d(TAG, "Aranan kelime: " + query);
+
         searchResults.clear();
 
-        // Geçici listeler oluştur
+        // Geçici listeler
         List<String> tempUserResults = new ArrayList<>();
         List<String> tempProjectResults = new ArrayList<>();
 
-        // Önce kullanıcıları ara
-        List<User> allUsers = dataManager.getAllUsers();
-        for (User user : allUsers) {
-            if (user.getName().toLowerCase().contains(query.toLowerCase()) ||
-                    user.getEmail().toLowerCase().contains(query.toLowerCase()) ||
-                    user.getDepartment().toLowerCase().contains(query.toLowerCase())) {
+        // ==================== KULLANICI ARAMA ====================
+        List<User> matchedUsers = dataManager.searchUsers(query);
+        Log.d(TAG, "Bulunan kullanıcı sayısı: " + matchedUsers.size());
 
-                String userInfo = "👤 " + user.getName() +
-                        "\n📧 " + user.getEmail() +
-                        "\n🎓 " + user.getDepartment();
-                tempUserResults.add(userInfo);
-            }
+        for (User user : matchedUsers) {
+            int userProjectCount = (user.getProjects() != null) ? user.getProjects().size() : 0;
+
+            String userInfo = "👤 " + user.getName() +
+                    "\n📧 " + user.getEmail() +
+                    "\n🎓 " + user.getDepartment() +
+                    "\n📁 " + userProjectCount + " proje";
+            tempUserResults.add(userInfo);
         }
 
-        // Sonra projeleri ara
-        List<Project> allProjects = dataManager.getAllProjects();
-        for (Project project : allProjects) {
-            if (project.getTitle().toLowerCase().contains(query.toLowerCase()) ||
-                    project.getCategory().toLowerCase().contains(query.toLowerCase()) ||
-                    project.getDescription().toLowerCase().contains(query.toLowerCase())) {
+        // ==================== PROJE ARAMA ====================
+        // ÖNEMLİ: getAllProjects() DEĞİL, searchProjects(query) kullan!
+        List<Project> matchedProjects = dataManager.searchProjects(query);
+        Log.d(TAG, "Bulunan proje sayısı: " + matchedProjects.size());
 
-                String projectInfo = "📁 " + project.getTitle() +
-                        "\n🏷️ Kategori: " + project.getCategory() +
-                        "\n👥 Takım: " + project.getTeamSize() + " kişi";
-                tempProjectResults.add(projectInfo);
-            }
+        for (Project project : matchedProjects) {
+            String projectInfo = "📁 " + project.getName() +
+                    "\n🏷️ Kategori: " + project.getCategory() +
+                    "\n👥 Takım: " + project.getCurrentParticipants() + "/" + project.getMaxParticipants() + " kişi";
+            tempProjectResults.add(projectInfo);
         }
 
-        // Sonuç mesajı
+        // ==================== SONUÇLARI GÖSTER ====================
         int userCount = tempUserResults.size();
         int projectCount = tempProjectResults.size();
 
+        Log.d(TAG, "---");
+        Log.d(TAG, "Sonuç: " + userCount + " kullanıcı, " + projectCount + " proje");
+        Log.d(TAG, "=== ARAMA BİTTİ ===\n");
+
         if (userCount == 0 && projectCount == 0) {
+            // <<< BU BLOK DÖNGÜLERDEN SONRA, ADAPTER'DAN ÖNCE >>>
+            searchResults.clear();
             searchResults.add("❌ Sonuç bulunamadı");
         } else {
-            // Başa özet ekle
-            searchResults.add("📊 " + userCount + " kullanıcı, " + projectCount + " proje bulundu\n");
-
-            // Kullanıcıları ekle
+            // Kullanıcı ve proje sonuçlarını ekle
             searchResults.addAll(tempUserResults);
-
-            // Projeleri ekle
             searchResults.addAll(tempProjectResults);
         }
 
         adapter.notifyDataSetChanged();
 
-        // Toast mesajı göster
-        Toast.makeText(this, userCount + " kullanıcı, " + projectCount + " proje bulundu", Toast.LENGTH_SHORT).show();
+
     }
+
 }
