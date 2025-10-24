@@ -24,11 +24,12 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView tvEducationInfo, tvGpaInfo;
     private LinearLayout llProjects, llWorkExperience, llAchievements;
     private Button btnEditProfile;
-    private Button btnDeleteAccount; // ⭐ YENİ - Hesap silme butonu
+    private Button btnDeleteAccount;
 
     private DataManager dataManager;
     private User currentUser;
     private int userId;
+    private boolean isOwnProfile = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
         tvUserBio = findViewById(R.id.tvUserBio);
         tvUserSkills = findViewById(R.id.tvUserSkills);
         btnEditProfile = findViewById(R.id.btnEditProfile);
-        btnDeleteAccount = findViewById(R.id.btnDeleteAccount); // ⭐ YENİ
+        btnDeleteAccount = findViewById(R.id.btnDeleteAccount);
 
         // Yeni alanlar
         tvEducationInfo = findViewById(R.id.tvEducationInfo);
@@ -56,28 +57,50 @@ public class ProfileActivity extends AppCompatActivity {
         llWorkExperience = findViewById(R.id.llWorkExperience);
         llAchievements = findViewById(R.id.llAchievements);
 
-        // ⭐ DÜZELTİLDİ: Önce currentUser'ı kontrol et
-        currentUser = dataManager.getCurrentUser();
+        // Mevcut kullanıcıyı al (giriş yapan kişi)
+        User loggedInUser = dataManager.getCurrentUser();
 
-        // Intent'ten USER_ID geliyorsa (başka kullanıcı profili görmek için)
+        // 🔹 Intent'ten USER_ID geliyorsa
         userId = getIntent().getIntExtra("USER_ID", -1);
 
         if (userId != -1) {
-            // Başka bir kullanıcının profili isteniyor
+            // Belirli bir kullanıcının profili isteniyor
             Log.d(TAG, "Intent'ten USER_ID alındı: " + userId);
-            User requestedUser = dataManager.getUserById(userId);
-            if (requestedUser != null) {
-                currentUser = requestedUser;
+            currentUser = dataManager.getUserById(userId);
+
+            // 🔹 Kendi profilimiz mi kontrol et
+            if (loggedInUser != null && loggedInUser.getId() == userId) {
+                isOwnProfile = true;
+                Log.d(TAG, "Kendi profilim açıldı (ID: " + userId + ")");
+            } else {
+                isOwnProfile = false;
+                Log.d(TAG, "Başkasının profili açıldı (ID: " + userId + ")");
             }
-        } else if (currentUser != null) {
-            // Kendi profilim
-            userId = currentUser.getId();
-            Log.d(TAG, "Kendi profilim gösteriliyor: " + userId);
+        } else {
+            // Hiç USER_ID yok = Kendi profilim
+            currentUser = loggedInUser;
+            if (currentUser != null) {
+                userId = currentUser.getId();
+                isOwnProfile = true;
+                Log.d(TAG, "Kendi profilim gösteriliyor (ID: " + userId + ")");
+            }
         }
 
         if (currentUser != null) {
             Log.d(TAG, "Kullanıcı yüklendi: " + currentUser.getName() + " (ID: " + userId + ")");
+            Log.d(TAG, "isOwnProfile: " + isOwnProfile);
             displayUserInfo();
+
+            // 🔹 Başkasının profilindeyse edit ve delete butonlarını gizle
+            if (!isOwnProfile) {
+                btnEditProfile.setVisibility(android.view.View.GONE);
+                btnDeleteAccount.setVisibility(android.view.View.GONE);
+                Log.d(TAG, "Başkasının profili - Butonlar gizlendi");
+            } else {
+                btnEditProfile.setVisibility(android.view.View.VISIBLE);
+                btnDeleteAccount.setVisibility(android.view.View.VISIBLE);
+                Log.d(TAG, "Kendi profilim - Butonlar görünür");
+            }
         } else {
             Log.e(TAG, "HATA: Kullanıcı bulunamadı!");
         }
@@ -92,7 +115,7 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // ⭐ YENİ - Hesap silme butonu
+        // Hesap silme butonu
         btnDeleteAccount.setOnClickListener(v -> showDeleteConfirmationDialog());
     }
 
@@ -100,42 +123,32 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "\n=== onResume() BAŞLADI ===");
+        Log.d(TAG, "userId: " + userId);
+        Log.d(TAG, "isOwnProfile: " + isOwnProfile);
 
-        // ⭐ DÜZELTİLDİ: Her zaman güncel currentUser'ı kontrol et
-        User latestCurrentUser = dataManager.getCurrentUser();
+        // ⭐ HER ZAMAN getUserById() KULLAN - ID her zaman doğru
+        User updatedUser = dataManager.getUserById(userId);
 
-        if (latestCurrentUser != null) {
-            // Eğer userId set edilmemişse veya kendi profilimse, güncel currentUser'ı kullan
-            if (userId == -1 || userId == latestCurrentUser.getId()) {
-                currentUser = latestCurrentUser;
-                userId = currentUser.getId();
-                Log.d(TAG, "✅ Güncel currentUser kullanılıyor: " + currentUser.getName());
-            } else {
-                // Başka bir kullanıcının profili gösteriliyorsa, onu yeniden yükle
-                User updatedUser = dataManager.getUserById(userId);
-                if (updatedUser != null) {
-                    currentUser = updatedUser;
-                    Log.d(TAG, "✅ Başka kullanıcı profili yenilendi: " + currentUser.getName());
-                }
-            }
-
-            Log.d(TAG, "Nesne referansı: " + System.identityHashCode(currentUser));
-
-            // Liste durumlarını logla
-            Log.d(TAG, "--- LİSTE DURUMLARI ---");
-            Log.d(TAG, "Projeler: " + (currentUser.getProjects() != null ? currentUser.getProjects().size() : "NULL") + " adet");
-            Log.d(TAG, "İş deneyimleri: " + (currentUser.getWorkExperience() != null ? currentUser.getWorkExperience().size() : "NULL") + " adet");
-            Log.d(TAG, "Başarılar: " + (currentUser.getAchievements() != null ? currentUser.getAchievements().size() : "NULL") + " adet");
-            Log.d(TAG, "----------------------");
-
-            // Ekranı yenile
-            displayUserInfo();
-
-            Log.d(TAG, "✅ Ekran yenilendi");
+        if (updatedUser != null) {
+            currentUser = updatedUser;
+            Log.d(TAG, "✅ Profil güncellendi: " + currentUser.getName());
         } else {
-            Log.e(TAG, "❌ HATA: getCurrentUser() null döndü!");
+            Log.e(TAG, "❌ HATA: Kullanıcı bulunamadı (ID: " + userId + ")");
         }
 
+        Log.d(TAG, "Nesne referansı: " + System.identityHashCode(currentUser));
+
+        // Liste durumlarını logla
+        Log.d(TAG, "--- LİSTE DURUMLARI ---");
+        Log.d(TAG, "Projeler: " + (currentUser.getProjects() != null ? currentUser.getProjects().size() : "NULL") + " adet");
+        Log.d(TAG, "İş deneyimleri: " + (currentUser.getWorkExperience() != null ? currentUser.getWorkExperience().size() : "NULL") + " adet");
+        Log.d(TAG, "Başarılar: " + (currentUser.getAchievements() != null ? currentUser.getAchievements().size() : "NULL") + " adet");
+        Log.d(TAG, "----------------------");
+
+        // Ekranı yenile
+        displayUserInfo();
+
+        Log.d(TAG, "✅ Ekran yenilendi");
         Log.d(TAG, "=== onResume() BİTTİ ===\n");
     }
 
@@ -150,7 +163,7 @@ public class ProfileActivity extends AppCompatActivity {
         // ⭐ Bio - null check
         String bio = currentUser.getBio();
         tvUserBio.setText((bio == null || bio.isEmpty()) ?
-                "Henüz biyografi eklenmemiş. Profili düzenle butonuna tıklayarak ekleyebilirsin." : bio);
+                "Henüz biyografi eklenmemiş." : bio);
 
         // ⭐ Beceriler - String olarak (List değil!)
         String skillsString = currentUser.getSkills();
@@ -236,7 +249,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
-    // ⭐ YENİ METOD - İlk onay dialogu
+    // ⭐ İlk onay dialogu
     private void showDeleteConfirmationDialog() {
         Log.d(TAG, "showDeleteConfirmationDialog() çağrıldı");
 
@@ -251,7 +264,6 @@ public class ProfileActivity extends AppCompatActivity {
                         "Email: " + currentUser.getEmail())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton("EVET, SİL", (dialog, which) -> {
-                    // İkinci onay göster (çift güvenlik)
                     showFinalConfirmation();
                 })
                 .setNegativeButton("İPTAL", (dialog, which) -> {
@@ -262,7 +274,7 @@ public class ProfileActivity extends AppCompatActivity {
                 .show();
     }
 
-    // ⭐ YENİ METOD - Son onay dialogu (çift güvenlik)
+    // ⭐ Son onay dialogu
     private void showFinalConfirmation() {
         Log.d(TAG, "showFinalConfirmation() çağrıldı");
 
@@ -273,38 +285,33 @@ public class ProfileActivity extends AppCompatActivity {
                         "Devam etmek istiyor musunuz?")
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton("EVET, EMİNİM", (dialog, which) -> {
-                    // Hesabı sil
                     deleteAccount();
                 })
                 .setNegativeButton("HAYIR", (dialog, which) -> {
                     Log.d(TAG, "Kullanıcı son onayda iptal etti");
                     Toast.makeText(this, "Hesabınız güvende 😊", Toast.LENGTH_SHORT).show();
                 })
-                .setCancelable(false) // Dışarı tıklayarak kapatamaz
+                .setCancelable(false)
                 .show();
     }
 
-    // ⭐ YENİ METOD - Hesabı sil
+    // ⭐ Hesabı sil
     private void deleteAccount() {
         Log.d(TAG, "\n=== deleteAccount() BAŞLADI ===");
         Log.d(TAG, "Silinecek kullanıcı: " + currentUser.getName() + " (" + currentUser.getEmail() + ")");
 
-        // Loading mesajı göster
         Toast.makeText(this, "Hesap siliniyor...", Toast.LENGTH_SHORT).show();
 
         try {
-            // DataManager üzerinden hesabı sil
             boolean success = dataManager.deleteCurrentUser();
 
             if (success) {
                 Log.d(TAG, "✅ Hesap başarıyla silindi!");
 
-                // Başarı mesajı
                 Toast.makeText(this,
                         "✅ Hesabınız başarıyla silindi.\nGörüşmek üzere!",
                         Toast.LENGTH_LONG).show();
 
-                // LoginActivity'ye yönlendir (tüm geçmişi temizle)
                 Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
@@ -314,7 +321,6 @@ public class ProfileActivity extends AppCompatActivity {
             } else {
                 Log.e(TAG, "❌ HATA: Hesap silinemedi!");
 
-                // Hata mesajı
                 Toast.makeText(this,
                         "❌ Hesap silinirken bir hata oluştu!\nLütfen tekrar deneyin.",
                         Toast.LENGTH_LONG).show();
@@ -323,7 +329,6 @@ public class ProfileActivity extends AppCompatActivity {
             Log.e(TAG, "❌ EXCEPTION: deleteAccount başarısız", e);
             e.printStackTrace();
 
-            // Hata mesajı
             Toast.makeText(this,
                     "❌ Beklenmeyen bir hata oluştu!",
                     Toast.LENGTH_SHORT).show();

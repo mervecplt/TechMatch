@@ -125,6 +125,11 @@ public class DataManager {
         return user;
     }
 
+    // 🔹 YENİ METOD EKLENDI: Email'e göre kullanıcı getir
+    public User getUserByEmail(String email) {
+        return users.get(email);
+    }
+
     // ⭐ DÜZELTME: Kullanıcı bilgilerini güncelle
     public void updateUser(User user) {
         if (user != null) {

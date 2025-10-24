@@ -1,9 +1,10 @@
 package com.example.techmatch.models;
 
+import java.io.Serializable;  // 🔹 EKLENDI
 import java.util.ArrayList;
 import java.util.List;
 
-public class User {
+public class User implements Serializable {  // 🔹 implements Serializable EKLENDI
     private int id;
     private String name;
     private String email;

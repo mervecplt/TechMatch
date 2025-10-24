@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;  // 🔹 EKLENDI
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -59,6 +60,37 @@ public class SearchActivity extends AppCompatActivity {
         searchResults = new ArrayList<>();
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, searchResults);
         lvSearchResults.setAdapter(adapter);
+
+        // 🔹 ListView item'larına tıklama olayı
+        lvSearchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = searchResults.get(position);
+
+                // Eğer kullanıcı ise (👤 ile başlıyorsa)
+                if (selectedItem.startsWith("👤")) {
+                    // Kullanıcı bilgilerini parse et
+                    String[] lines = selectedItem.split("\n");
+                    String email = lines[1].replace("📧 ", "").trim();
+
+                    // Email ile kullanıcıyı bul
+                    User selectedUser = dataManager.getUserByEmail(email);
+
+                    if (selectedUser != null) {
+                        // ProfileActivity'ye git - SADECE ID GÖNDER 🔹
+                        Intent intent = new Intent(SearchActivity.this, ProfileActivity.class);
+                        intent.putExtra("USER_ID", selectedUser.getId());
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(SearchActivity.this, "Kullanıcı bulunamadı", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                // Eğer proje ise (📁 ile başlıyorsa)
+                else if (selectedItem.startsWith("📁")) {
+                    Toast.makeText(SearchActivity.this, "Proje detayları yakında eklenecek", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         // 🔍 Arama ikonuna tıklayınca arama yap
         ivSearchIcon.setOnClickListener(new View.OnClickListener() {
@@ -191,7 +223,6 @@ public class SearchActivity extends AppCompatActivity {
         Log.d(TAG, "=== ARAMA BİTTİ ===\n");
 
         if (userCount == 0 && projectCount == 0) {
-            // <<< BU BLOK DÖNGÜLERDEN SONRA, ADAPTER'DAN ÖNCE >>>
             searchResults.clear();
             searchResults.add("❌ Sonuç bulunamadı");
         } else {
@@ -201,8 +232,5 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         adapter.notifyDataSetChanged();
-
-
     }
-
 }
